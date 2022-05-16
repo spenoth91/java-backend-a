@@ -51,7 +51,11 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.7</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
