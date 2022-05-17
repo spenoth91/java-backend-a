@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 @Service
 public class PasswordService {
     @SneakyThrows
-    public static byte[] hash(String passwordToHash) {
+    public String hash(String passwordToHash) {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
@@ -17,8 +17,7 @@ public class PasswordService {
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         md.update(salt);
 
-        byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+        return new String(md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8)));
 
-        return hashedPassword;
     }
 }

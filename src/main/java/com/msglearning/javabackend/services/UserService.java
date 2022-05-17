@@ -2,6 +2,7 @@ package com.msglearning.javabackend.services;
 
 import com.msglearning.javabackend.converters.UserConverter;
 import com.msglearning.javabackend.entity.User;
+import com.msglearning.javabackend.exceptionhandling.ValidationException;
 import com.msglearning.javabackend.repositories.UserRepository;
 import com.msglearning.javabackend.to.UserTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,48 +22,37 @@ public class UserService {
 
     public UserTO save(UserTO userTO) {
 
-
-        //validate Phone
-        //validate email
-        //check firstname NotNull or empty
-        //check lastName NotNull or empty
-
-        List<String> errorMessage = new ArrayList<>();
+        List<String> errorMessages = new ArrayList<>();
         if (userTO.getEmail() == null)
-            errorMessage.add("The E-mail is missing");
+            errorMessages.add("The E-mail is missing");
         else if (!isValidEmailAddress(userTO.getEmail()))
-            errorMessage.add("Invalid Email");
+            errorMessages.add("Invalid Email");
 
         if (userTO.getFirstName()==null || userTO.getLastName()==null)
-            errorMessage.add("Name is missing");
+            errorMessages.add("Name is missing");
 
         if (!isValidRomanianPhoneNumber(userTO.getPhone()))
-            errorMessage.add("Phone number is not valid");
+            errorMessages.add("Phone number is not valid");
 
         if (userTO.getPassword()==null)
-            errorMessage.add("The password is missing");
+            errorMessages.add("The password is missing");
 
-
-        if (errorMessage.isEmpty()){
+        if (errorMessages.isEmpty()){
             User user= new User();
             user.setFirstName(userTO.getFirstName());
             user.setLastName(userTO.getLastName());
             user.setEmail(userTO.getEmail());
             user.setPhone(userTO.getPhone());
-            user.setPassword(userTO.getPassword());
+            user.setPassword(passwordService.hash(userTO.getPassword()));
             user.setOccupation(userTO.getOccupation());
 
-            passwordService.hash(user.getPassword());
             userRepository.save(user);
             return UserConverter.convertToTO(user);
 
-        }
-        //password needs to be hashed
-        //E-mail needs to be mapped
-        return null;
+        } else
+            throw new ValidationException(String.join("\n", errorMessages));
 
     }
-
 
     public boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
