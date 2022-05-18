@@ -18,4 +18,8 @@ public class UserTO implements Serializable {
     private String email;
 
     private String phone;
+
+    private String occupation;
+
+    private String password;
 }

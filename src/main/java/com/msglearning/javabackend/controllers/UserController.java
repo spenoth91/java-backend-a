@@ -23,6 +23,8 @@ public class UserController {
     private static final String EMAIL_PATH = "/email/{email}";
     private static final String NAME_PATH = "/name/{name}";
     private static final String PROFILE_IMAGE = "/image/{id}";
+    private static final String GMAIL_PATH = "/gmail";
+    private static final String REGISTER_PATH = "/register";
 
     @Autowired
     UserService userService;
@@ -65,4 +67,16 @@ public class UserController {
         String profileImageStoragePlace = env.getProperty("profileimage.path");
         return imageService.read(profileImageStoragePlace +"\\"+imageNameOpt.get());
     }
+
+    @GetMapping(GMAIL_PATH)
+    public List<User> getByGmail() {
+        return userService.getGmailUsers();
+    }
+
+    @PostMapping(REGISTER_PATH)
+    public UserTO registerUser(@RequestBody UserTO userTO){
+        return userService.save(userTO);
+    }
+
+
 }
