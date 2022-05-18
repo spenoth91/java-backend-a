@@ -2,14 +2,13 @@ package com.msglearning.javabackend.services;
 
 import com.msglearning.javabackend.converters.UserConverter;
 import com.msglearning.javabackend.entity.User;
+import com.msglearning.javabackend.exceptionhandling.ValidationException;
 import com.msglearning.javabackend.repositories.UserRepository;
 import com.msglearning.javabackend.to.UserTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,14 +17,55 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public User save(User user) {
+    @Autowired
+    PasswordService passwordService;
 
-        //validate Phone
-        //validate email
-        //check firstname NotNull or empty
-        //check lastName NotNull or empty
+    public UserTO save(UserTO userTO) {
 
-        return userRepository.save(user);
+        List<String> errorMessages = new ArrayList<>();
+        if (userTO.getEmail() == null)
+            errorMessages.add("The E-mail is missing");
+        else if (!isValidEmailAddress(userTO.getEmail()))
+            errorMessages.add("Invalid Email");
+
+        if (userTO.getFirstName()==null || userTO.getLastName()==null)
+            errorMessages.add("Name is missing");
+
+        if (!isValidRomanianPhoneNumber(userTO.getPhone()))
+            errorMessages.add("Phone number is not valid");
+
+        if (userTO.getPassword()==null)
+            errorMessages.add("The password is missing");
+
+        if (errorMessages.isEmpty()){
+            User user= new User();
+            user.setFirstName(userTO.getFirstName());
+            user.setLastName(userTO.getLastName());
+            user.setEmail(userTO.getEmail());
+            user.setPhone(userTO.getPhone());
+            user.setPassword(passwordService.hash(userTO.getPassword()));
+            user.setOccupation(userTO.getOccupation());
+
+            userRepository.save(user);
+            return UserConverter.convertToTO(user);
+
+        } else
+            throw new ValidationException(String.join("\n", errorMessages));
+
+    }
+
+    public boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    public boolean isValidRomanianPhoneNumber(String phone) {
+        String ePattern = "^(\\+4|)?(07[0-8]{1}[0-9]{1}|02[0-9]{2}|03[0-9]{2}){1}?(\\s|\\.|\\-)?([0-9]{3}(\\s|\\.|\\-|)){2}$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(phone);
+        return m.matches();
     }
 
     public List<UserTO> findAll() {
@@ -59,6 +99,22 @@ public class UserService {
 
     public Optional<String> getProfileImage(Long userId) {
         return userRepository.findProfileImageById(userId);
+    }
+
+    public List<User> getGmailUsers() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .filter(user -> user.getEmail().endsWith("gmail.com"))
+                .collect(Collectors.toList());
+
+    }
+
+    public Map<String, List<User>> groupByOccupation() {
+        List<User> allUsers = userRepository.findAll();
+
+        return allUsers.stream()
+                .collect(Collectors.groupingBy(User::getOccupation));
     }
 
 }
