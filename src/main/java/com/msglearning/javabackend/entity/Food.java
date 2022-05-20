@@ -2,10 +2,8 @@ package com.msglearning.javabackend.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Data
 @Table(name = Food.TABLE_NAME)
@@ -15,6 +13,7 @@ public class Food {
     static final String TABLE_NAME = "food";
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name="food_id")
     private Long id;
 
@@ -28,7 +27,7 @@ public class Food {
     private String ingredients;
 
     @Column
-    private Float price;
+    private BigDecimal price;
 
     @Column (name= "food_image")
     private String foodImage;

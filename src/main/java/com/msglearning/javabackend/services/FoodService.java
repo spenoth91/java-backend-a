@@ -1,9 +1,10 @@
 package com.msglearning.javabackend.services;
 
-import com.msglearning.javabackend.converters.UserConverter;
-import com.msglearning.javabackend.entity.User;
-import com.msglearning.javabackend.repositories.UserRepository;
-import com.msglearning.javabackend.to.UserTO;
+import com.msglearning.javabackend.converters.FoodConverter;
+import com.msglearning.javabackend.entity.Food;
+import com.msglearning.javabackend.exceptionhandling.NotFoundException;
+import com.msglearning.javabackend.repositories.FoodRepository;
+import com.msglearning.javabackend.to.FoodTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,53 +13,76 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 public class FoodService {
 
     @Autowired
-    UserRepository userRepository;
+    FoodRepository foodRepository;
 
-    public User save(User user) {
 
-        //validate Phone
-        //validate email
-        //check firstname NotNull or empty
-        //check lastName NotNull or empty
+    public void updateAvailability (long id, boolean availability){
+        Food food = foodRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("Food with id "+id+" not found"));
 
-        return userRepository.save(user);
+        food.setAvailability(availability);
+        foodRepository.save(food);
     }
 
-    public List<UserTO> findAll() {
-        List<User> users = userRepository.findAll();
-        if (users.isEmpty())
+
+    public FoodTO save(FoodTO foodTO){
+
+        Food food=new Food();
+        mapFoodTO(foodTO, food);
+
+        foodRepository.save(food);
+
+        return FoodConverter.convertToTO(food);
+    }
+
+
+    public List<FoodTO> findAll() {
+        List<Food> foods = foodRepository.findAll();
+        if (foods.isEmpty())
             return Collections.emptyList();
         else
-            return users.stream()
-                    .map(UserConverter::convertToTO)
+            return foods.stream()
+                    .map(FoodConverter::convertToTO)
                     .collect(Collectors.toList());
     }
 
-    public List<UserTO> findByName(String token) {
-        List<User> users = userRepository.findByName(token);
-        if (users.isEmpty())
-            return Collections.emptyList();
-        else
-            return users.stream()
-                    .map(UserConverter::convertToTO)
-                    .collect(Collectors.toList());
-    }
+    public void delete(Long id){
+        Food food = foodRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("Food with id "+id+" not found"));
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+        foodRepository.delete(food);
     }
 
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+
+    public Optional<FoodTO> findById(Long id) {
+        return foodRepository.findById(id)
+                .map(FoodConverter::convertToTO);
+
     }
 
-    public Optional<String> getProfileImage(Long userId) {
-        return userRepository.findProfileImageById(userId);
+
+    public FoodTO update(Long id, FoodTO foodTO) {
+        Food food = foodRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("Food with id "+id+" not found"));
+
+        mapFoodTO(foodTO, food);
+
+        foodRepository.save(food);
+
+        return FoodConverter.convertToTO(food);
     }
 
+    private void mapFoodTO(FoodTO foodTO, Food food) {
+        food.setFoodName(foodTO.getFoodName());
+        food.setCalories(foodTO.getCalories());
+        food.setIngredients(foodTO.getIngredients());
+        food.setPrice(foodTO.getPrice());
+        food.setAvailability(foodTO.getAvailability());
+    }
 }

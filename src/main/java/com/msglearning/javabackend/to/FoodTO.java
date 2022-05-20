@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class FoodTO implements Serializable {
 
     private String ingredients;
 
-    private Float price;
+    private BigDecimal price;
 
     private Boolean availability;
 }
