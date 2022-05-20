@@ -22,4 +22,5 @@ public class UserTO implements Serializable {
     private String occupation;
 
     private String password;
+
 }

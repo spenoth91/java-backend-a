@@ -38,5 +38,7 @@ public class User {
     @Column
     private String occupation;
 
+    @Column
+    private Boolean admin;
 
 }

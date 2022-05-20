@@ -9,6 +9,7 @@ public class UserConverter {
     public static final UserTO convertToTO(User entity) {
         return new UserTO(entity.getId(), entity.getFirstName(),
                 entity.getLastName(), entity.getEmail(), entity.getPhone(), entity.getOccupation(), entity.getPassword());
+
     }
 
 }
