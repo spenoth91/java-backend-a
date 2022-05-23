@@ -11,5 +11,16 @@ public class UserConverter {
                 entity.getLastName(), entity.getEmail(), entity.getPhone(), entity.getOccupation(), entity.getPassword());
 
     }
+    public static final User convertToEntity(UserTO to) {
+        return User.builder()
+                .id(to.getId())
+                .password(to.getPassword())
+                .firstName(to.getFirstName())
+                .lastName(to.getLastName())
+                .email(to.getEmail())
+                .phone(to.getPhone())
+                .occupation(to.getOccupation())
+                .build();
+    }
 
 }

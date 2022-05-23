@@ -73,10 +73,5 @@ public class UserController {
         return userService.getGmailUsers();
     }
 
-    @PostMapping(REGISTER_PATH)
-    public UserTO registerUser(@RequestBody UserTO userTO){
-        return userService.save(userTO);
-    }
-
 
 }
