@@ -11,6 +11,8 @@ public class UserTO implements Serializable {
 
     private Long id;
 
+    private String password;
+
     private String firstName;
 
     private String lastName;
@@ -21,6 +23,5 @@ public class UserTO implements Serializable {
 
     private String occupation;
 
-    private String password;
 
 }

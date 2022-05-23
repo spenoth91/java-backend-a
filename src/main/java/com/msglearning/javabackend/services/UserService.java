@@ -20,7 +20,7 @@ public class UserService {
     @Autowired
     PasswordService passwordService;
 
-    public UserTO save(UserTO userTO) {
+    public void save(UserTO userTO) throws Exception {
 
         List<String> errorMessages = new ArrayList<>();
         if (userTO.getEmail() == null)
@@ -43,11 +43,10 @@ public class UserService {
             user.setLastName(userTO.getLastName());
             user.setEmail(userTO.getEmail());
             user.setPhone(userTO.getPhone());
-            user.setPassword(passwordService.hash(userTO.getPassword()));
+            user.setPassword(PasswordService.getSaltedHash(userTO.getPassword()));
             user.setOccupation(userTO.getOccupation());
 
             userRepository.save(user);
-            return UserConverter.convertToTO(user);
 
         } else
             throw new ValidationException(String.join("\n", errorMessages));
