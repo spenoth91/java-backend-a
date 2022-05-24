@@ -1,13 +1,19 @@
 package com.msglearning.javabackend.entity;
 
-import lombok.Data;
+import ch.qos.logback.core.BasicStatusManager;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Table(name = Food.TABLE_NAME)
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Food {
 
     static final String TABLE_NAME = "food";
@@ -16,6 +22,10 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name="food_id")
     private Long id;
+
+    @Builder.Default
+    @OneToMany (mappedBy = "food")
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column (name= "food_name")
     private String foodName;
@@ -34,6 +44,11 @@ public class Food {
 
     @Column
     private Boolean availability;
+
+    public void addOrderItem(OrderItem orderItem){
+        this.orderItems.add(orderItem);
+        orderItem.setFood(this);
+    }
 
 }
 
