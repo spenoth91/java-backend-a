@@ -2,7 +2,6 @@ package com.msglearning.javabackend.converters;
 
 import com.msglearning.javabackend.entity.User;
 import com.msglearning.javabackend.to.UserTO;
-import org.springframework.stereotype.Service;
 
 public class UserConverter {
 

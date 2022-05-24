@@ -102,4 +102,14 @@ public class TokenService {
         LOG.debug(toLog.toString());
     }
 
+    /*
+    public static String getToken() {
+        String token = null;
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            token = ((OAuth2AuthenticationDetails) authentication.getDetails()).getTokenValue();
+        }
+        return token;
+    }
+    */
 }
