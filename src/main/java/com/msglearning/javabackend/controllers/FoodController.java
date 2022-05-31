@@ -13,7 +13,6 @@ import java.util.Optional;
 @RequestMapping({ ControllerConstants.API_PATH_FOOD })
 public class FoodController {
 
-    private static final String ALL_PATH = "/all";
     private static final String ID_PATH = "/{id}";
     private static final String AVAILABILITY_PATH = "/{id}/availability";
 
