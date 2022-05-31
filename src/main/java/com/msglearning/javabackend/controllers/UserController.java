@@ -24,7 +24,7 @@ public class UserController {
     private static final String NAME_PATH = "/name/{name}";
     private static final String PROFILE_IMAGE = "/image/{id}";
     private static final String GMAIL_PATH = "/gmail";
-    private static final String REGISTER_PATH = "/register";
+
 
     @Autowired
     UserService userService;

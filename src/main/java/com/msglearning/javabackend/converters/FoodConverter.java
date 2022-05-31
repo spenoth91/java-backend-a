@@ -6,8 +6,15 @@ import com.msglearning.javabackend.to.FoodTO;
 public class FoodConverter {
 
     public static final FoodTO convertToTO(Food entity) {
-        return new FoodTO(entity.getId(), entity.getFoodName(),
-                entity.getCalories(), entity.getIngredients(), entity.getPrice(), entity.getAvailability());
+        return FoodTO.builder()
+                .id(entity.getId())
+                .foodName(entity.getFoodName())
+                .calories(entity.getCalories())
+                .ingredients(entity.getIngredients())
+                .price(entity.getPrice())
+                .foodImage(entity.getFoodImage())
+                .availability(entity.getAvailability())
+                .build();
     }
 
 }
